@@ -1,0 +1,25 @@
+%get original audio file
+[x,Fo] = audioread('os.m4a');
+
+%get time based 
+to=(1/Fo:1/Fo:length(x)/Fo);
+
+%plot the Original Waveform in Time Domain 
+subplot(2,1,1);
+plot(to,x);
+grid;
+title('Original Waveform in Time Domain');
+xlabel('Time');ylabel('Amplitude');
+
+%plot the Original Waveform in Frequency Domain 
+subplot (2,1,2);
+m=length(x)-1;
+fo=0:Fo/m:Fo;
+
+%perform FFT for original waveform 
+xfft=abs(fft(x));
+plot(fo,xfft);
+grid;
+title('Original Waveform in Frequency Domain'); 
+xlabel('Frequency');
+ylabel('Magnitude');
