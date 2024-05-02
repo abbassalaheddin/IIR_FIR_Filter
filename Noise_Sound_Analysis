@@ -1,0 +1,25 @@
+%get noise audio file
+[y,Fn] = audioread('os.m4a');
+
+%get time based on sampling frequency
+tn=(1/Fn:1/Fn:length(y)/Fn);
+
+%plot the Noise Waveform in Time Domain
+subplot(2,1,1);
+plot(tn,y);
+grid;
+title('Noise Waveform in Time Domain');
+xlabel('Time');
+ylabel('Amplitude');
+
+%plot the Noise Waveform in Frequency Domain
+subplot(2,1,2);
+n=length(y)-1;
+fn=0:Fn/n:Fn;
+%perform FFT noise waveform
+yfft=abs(fft(y));
+plot(fn,yfft);
+grid;
+title('Noise Waveform in Frequency Domain');
+xlabel('Frequency');
+ylabel('Magnitude');
