@@ -1,0 +1,86 @@
+%get original audio file 
+[x,Fo] = audioread('G1o.wav');
+
+%get time based on sampling frequency for G10.wav 
+to=(1/Fo:1/Fo:length(x)/Fo);
+
+%get noise audio file
+[y,Fn] = audioread('G1n.wav');
+
+%get time based on sampling frequency for G1n.wav 
+tn=(1/Fn:1/Fn:length(y)/Fn);
+figure(1);
+
+%plot the Original Waveform in Time Domain 
+subplot(2,1,1);
+plot(to,x); grid;
+title('Original Waveform in Time Domain'); 
+xlabel('Time');
+ylabel('Amplitude');
+
+%plot the Original Waveform in Frequency Domain
+subplot (2,1,2);
+m=length(x)-1; 
+fo=0:Fo/m:Fo;
+
+%perform FFT for original waveform
+xfft=abs(fft(x));
+plot(fo,xfft); 
+grid;
+title('Original Waveform in Frequency Domain'); 
+xlabel('Frequency');ylabel('Magnitude');
+figure(2);
+
+%plot the Noise Waveform in Time Domain 
+subplot(2,1,1);
+plot(tn,y); grid;
+title('Noise Waveform in Time Domain'); 
+xlabel('Time');ylabel('Amplitude');
+%plot the Noise Waveform in Frequency Domain 
+subplot(2,1,2);
+n=length(y)-1; 
+fn=0:Fn/n:Fn;
+
+%perform FFT noise waveform 
+yfft=abs(fft(y)); 
+plot(fn,yfft);
+grid;
+title('Noise Waveform in Frequency Domain');
+xlabel('Frequency');
+ylabel('Magnitude');
+
+
+%filter design
+fs = 3500;	%stopband frequency
+fp = 3300;  %passband frequency 
+ft = 16000;  %sampling frequency
+Wn = (fs+fp)/ft;
+%Window-based fir filter design 
+a = fir1(248,Wn);
+%Frequency response of digital filter 
+[h,w] = freqz(a,1);
+z = filter(a,1,y);
+
+%filter the noise data, y
+%write the filtered sound 
+audiowrite('Filtered_FIR_G1.wav',z,ft);
+%get the filtered audio file 
+[n,Ff]=audioread('Filtered_FIR_G1.wav');
+
+%get time based 
+tf=(1/Ff:1/Ff:length(n)/Ff);
+figure(3);
+%plot the waveform in time domain 
+subplot(2,1,1);
+plot(tf,n); grid;
+title('Filtered Waveform in Time Domain');
+xlabel('Time');
+ylabel('Amplitude');
+subplot (2,1,2);
+
+%plot the waveform infrequency domain 
+m=length(n)-1;
+ff=0:Ff/m:Ff;
+nfft=abs(fft(n));	%perform fft 
+plot(ff,nfft);
+grid;
