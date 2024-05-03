@@ -1,0 +1,18 @@
+%filter design
+fs = 3500;       %stopband frequency
+fp = 3300;       %passband frequency 
+ft = 16000;      %sampling frequency 
+Wn = (fs+fp)/ft;
+
+%Window-based fir filter design 
+a = fir1(248,Wn,hann(Wn));
+
+%plot the frequency response 
+freqz(a,1);
+figure(2);
+
+%plot the low pass filter 
+plot(w/pi, 20*log10(abs(h)));
+title('Low Pass Filter');
+xlabel('\omega/\pi');
+ylabel('Gain (dB)'); grid;
