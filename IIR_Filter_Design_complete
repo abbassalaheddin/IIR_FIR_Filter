@@ -1,0 +1,96 @@
+%get original audio file
+[x,Fo] = audioread('os.m4a');
+
+%get time based on sampling frequency
+to=(1/Fo:1/Fo:length(x)/Fo);
+
+%get noise audio file
+[y,Fn] = audioread('ns.m4a');
+ 
+%get time based on sampling frequency
+tn=(1/Fn:1/Fn:length(y)/Fn);
+figure(1);
+
+%plot the Original Waveform in Time Domain 
+subplot(2,1,1);
+plot(to,x); 
+grid;
+title('Original Waveform in Time Domain'); 
+xlabel('Time');
+ylabel('Amplitude');
+%plot the Original Waveform in Frequency Domain 
+subplot (2,1,2);
+m=length(x)-1; 
+fo=0:Fo/m:Fo;
+%perform FFT for original waveform
+xfft=abs(fft(x));
+plot(fo,xfft);
+grid;
+title('Original Waveform in Frequency Domain');
+xlabel('Frequency');
+ylabel('Magnitude');
+figure(2);
+
+%plot the Noise Waveform in Time Domain 
+subplot(2,1,1);
+plot(tn,y); 
+grid;
+title('Noise Waveform in Time Domain'); 
+xlabel('Time');
+ylabel('Amplitude');
+
+%plot the Noise Waveform in Frequency Domain 
+subplot(2,1,2);
+n=length(y)-1; 
+fn=0:Fn/n:Fn;
+
+%perform FFT noise waveform 
+yfft=abs(fft(y));
+plot(fn,yfft);
+grid;
+title('Noise Waveform in Frequency Domain');
+xlabel('Frequency');
+ylabel('Magnitude');
+
+%filter design
+Ws = 0.4375;	%stopband frequency
+Wp = 0.4125;	%passband frequency
+Ft = 16000;
+ft = Ft/2;	%sampling frequency
+Rp = 1;	    %passband Ripple
+Rs = 34;	%stopband Attenuation
+
+%butterworth filter design
+%Butterworth filter order and cutoff frequency 
+[n,Wn] = buttord(Wp,Ws,Rp,Rs);
+[b,a] = butter(n,Wn); %perform butterworth filter
+%Frequency response of digital filter
+[H,w] = freqz(b,a,512,1);
+z = filter(b,a,y);	%filter with noise sound
+%Frequency response of digital filter 
+[hd wd] = freqz(b,a);
+%write the new filtered sound 
+audiowrite('Filtered_IIR_G1.wav',z,Ft);
+%get filtered audio file
+[n Ff] = audioread('Filtered_IIR_G1.wav');
+%get time based on sampling frequency
+% 
+tf=(1/Ff:1/Ff:length(x)/Ff);
+figure(3);
+%plot the waveform in time domain
+subplot(2,1,1);
+plot(tf,n);
+grid;
+title('Filtered Waveform in Time Domain'); 
+xlabel('Time');
+ylabel('Amplitude'); 
+subplot (2,1,2);
+%plot the waveform in frequency domain 
+m=length(n)-1;
+ff=0:Ff/m:Ff; 
+nfft=abs(fft(n));
+%perform fft
+plot(ff,nfft); grid;
+title('Filtered Waveform in Frequency Domain');
+xlabel('Frequency');
+ylabel('Magnitude');
