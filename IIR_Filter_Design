@@ -1,0 +1,19 @@
+%filter design
+Ws = 0.4375;	%stopband frequency
+Wp = 0.4125;	%passband frequency 
+Ft = 16000;
+ft = Ft/2;	%sampling frequency
+Rp = 1;	%passband Ripple
+Rs = 34;	%stopband Attenuation
+%butterworth filter design
+%Butterworth filter order and cutoff frequency 
+[n,Wn] = buttord(Wp,Ws,Rp,Rs);
+[b,a] = butter(n,Wn); 
+%perform butterworth filter
+%Frequency response of digital filter 
+[hd wd] = freqz(b,a);
+figure(1);
+freqz(b,a,512,1);
+%Plot the low pass filter 
+figure(2); plot(wd/pi,abs(hd)); title('Low Pass Filter');
+xlabel('\omega/\pi');ylabel('Gain (dB)'); grid;
